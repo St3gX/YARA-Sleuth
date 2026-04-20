@@ -1,9 +1,7 @@
 # YARA-Sleuth 🔍
 ### Advanced File System Scanner for Digital Forensics by St3gX
 
-A professional-grade forensics tool built in Python that uses **YARA rules** to
-detect malware, suspicious files, credential leaks, data exfiltration artifacts,
-and security threats across a file system.
+A modular, multi-threaded digital forensics engine designed to detect malware indicators and data exfiltration artifacts using advanced YARA pattern matching and file entropy analysis.
 
 ---
 
