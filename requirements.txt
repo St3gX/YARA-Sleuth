@@ -1,0 +1,23 @@
+yara-python>=4.5.4
+colorama>=0.4.6
+tabulate>=0.10.0
+
+
+## ⚙️ Installation
+
+### 🐧 Linux / Kali (Recommended)
+pip install -r requirements.txt
+
+### 🪟 Windows
+**Option 1 - One click:**
+Double-click `install.bat`
+
+**Option 2 - Manual:**
+1. Install Visual C++ Build Tools:
+   https://visualstudio.microsoft.com/visual-cpp-build-tools/
+2. Select "Desktop development with C++"
+3. Restart PC
+4. Run: pip install -r requirements.txt
+
+### 🍎 Mac
+pip install -r requirements.txt

@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+
+# Reports (generated files)
+reports/
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+Desktop.ini
