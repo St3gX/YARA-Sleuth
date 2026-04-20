@@ -3,6 +3,7 @@
 
 A modular, multi-threaded digital forensics engine designed to detect malware indicators and data exfiltration artifacts using advanced YARA pattern matching and file entropy analysis.
 
+Note: The /reports directory is created automatically upon the first scan and is ignored by version control to ensure privacy.
 ---
 
 ## 📁 Project Structure
