@@ -4,11 +4,11 @@ YARA-Sleuth: Advanced File System Scanner for Digital Forensics
 A professional-grade forensics tool using YARA rules to detect malware,
 suspicious files, data exfiltration artifacts, and security threats.
 
-Author: St3gX - Digital Forensics Tool
+Author: StegX
 Version: 1.0.0
 """
 
-# ── AUTO DEPENDENCY CHECKER (must run before other imports) ───
+# ── AUTO DEPENDENCY CHECKER (must run before other imports) ───────────────────
 import sys
 import subprocess
 
@@ -46,11 +46,9 @@ def check_dependencies():
         sys.exit(0)
 
 check_dependencies()
-# ── END DEPENDENCY CHECKER ────────────────────────────────────
-
+# ── END DEPENDENCY CHECKER ────────────────────────────────────────────────────
 
 import os
-import sys
 import yara
 import hashlib
 import json
@@ -85,18 +83,14 @@ SEVERITY_COLORS = {
 
 SEVERITY_ORDER = {"CRITICAL": 4, "HIGH": 3, "MEDIUM": 2, "LOW": 1, "INFO": 0}
 
-# File extensions to skip (binary/media files unlikely to contain text rules)
+# File extensions to skip (media files only — executables kept for malware scanning)
 SKIP_EXTENSIONS = {
     ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".ico", ".svg", ".webp",
     ".mp3", ".mp4", ".avi", ".mkv", ".mov", ".wav", ".flac",
-    ".zip", ".tar", ".gz", ".bz2", ".7z", ".rar",
-    ".dll", ".so", ".dylib", ".o", ".a",
-    ".db", ".sqlite", ".sqlite3",
     ".ttf", ".otf", ".woff", ".woff2",
-    ".pdf",  # handled separately
 }
 
-MAX_FILE_SIZE_MB = 50  # Skip files larger than this (in MB)
+MAX_FILE_SIZE_MB = 100  # Skip files larger than this (in MB)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -113,9 +107,9 @@ def print_banner():
    ██║   ██║  ██║██║  ██║██║  ██║       ███████║███████╗███████╗╚██████╔╝   ██║   ██║  ██║
    ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝       ╚══════╝╚══════╝╚══════╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
 {Style.RESET_ALL}
-{Fore.WHITE}  ┌──────────────────────────────────────────────────────────────────────────────────────────┐
-  │  {Fore.YELLOW}Advanced File System Scanner for Digital Forensics by St3gX {Fore.WHITE}│  {Fore.CYAN}v{VERSION}{Fore.WHITE}  │  {Fore.GREEN}YARA-Powered{Fore.WHITE}  │
-  └──────────────────────────────────────────────────────────────────────────────────────────┘{Style.RESET_ALL}
+{Fore.WHITE}  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  {Fore.YELLOW}Advanced File System Scanner for Digital Forensics by StegX  {Fore.WHITE}│  {Fore.CYAN}v{VERSION}{Fore.WHITE}  │  {Fore.GREEN}YARA-Powered{Fore.WHITE}  │
+  └─────────────────────────────────────────────────────────────────────────────────────┘{Style.RESET_ALL}
 """
     print(banner)
 
@@ -503,7 +497,7 @@ class ReportGenerator:
             "statistics": self.stats,
             "findings": self.results,
         }
-        with open(output_path, "w") as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2, default=str)
         print(f"{Fore.GREEN}[+] JSON report saved: {output_path}{Style.RESET_ALL}")
 
@@ -540,7 +534,7 @@ class ReportGenerator:
         lines.append("  END OF REPORT")
         lines.append("=" * 70)
 
-        with open(output_path, "w") as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             f.write("\n".join(lines))
         print(f"{Fore.GREEN}[+] Text report saved: {output_path}{Style.RESET_ALL}")
 
