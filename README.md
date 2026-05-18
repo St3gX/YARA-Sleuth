@@ -70,28 +70,32 @@ python yara_sleuth.py --target ./folder --no-json
 
 ## 📋 YARA Rule Sets
 
-### `malware_detection.yar`
-- Suspicious shell command execution
-- Ransomware indicators
-- Trojan/backdoor patterns
-- Credential harvesting
-- Base64-encoded payloads
-- Rootkit indicators
+### `binary_malware.yar`
+- Identifies Windows PE and Linux ELF executable headers.
+- Detects packed or obfuscated binaries (UPX, Themida, ASPack).
+- Flags compiled ransomware, Trojans, and Info-Stealer indicators.
+- Identifies anti-analysis and anti-VM evasion techniques.
+- Detects embedded shellcode (NOP sleds) and worm propagation behavior.
 
-### `suspicious_files.yar`
-- Suspicious Python scripts
-- Hidden executables (PE/ELF headers)
-- Registry manipulation
-- Network scanning tools
-- SQL injection payloads
-- Crypto-mining indicators
+### `malware_detection.yar`
+- Detects suspicious shell command execution (PowerShell, bash).
+- Flags ransomware behavior indicators and cryptocurrency addresses.
+- Identifies Trojan, RAT, and backdoor behavioral patterns.
+- Detects credential harvesting and memory-dumping strings (e.g., Mimikatz).
+- Flags Base64-encoded obfuscated payloads and rootkit indicators.
 
 ### `data_exfiltration.yar`
-- Credit card number patterns (PCI-DSS)
-- Social Security Numbers
-- Data exfiltration scripts
-- Email harvesting
-- Exposed API keys & private keys
+- Detects hardcoded PII including Credit Card patterns and SSNs.
+- Identifies data exfiltration scripts using web requests to external servers.
+- Flags mass email harvesting and scraping patterns.
+- Detects exposed API keys and private secrets (AWS, GCP, RSA keys).
+
+### `suspicious_files.yar`
+- Flags suspicious Python operations (`eval`, `exec`, `subprocess`).
+- Identifies hidden executables nested within archives or misnamed extensions.
+- Detects Windows registry persistence manipulation (`Run` keys).
+- Flags network reconnaissance tools and SQL injection payloads.
+- Identifies cryptocurrency mining indicators and potential compression bombs.
 
 ---
 
