@@ -4,11 +4,11 @@ YARA-Sleuth: Advanced File System Scanner for Digital Forensics
 A professional-grade forensics tool using YARA rules to detect malware,
 suspicious files, data exfiltration artifacts, and security threats.
 
-Author: StegX
+Author: St3gX - Digital Forensics Tool
 Version: 1.0.0
 """
 
-# ── AUTO DEPENDENCY CHECKER (must run before other imports) ───────────────────
+# ── AUTO DEPENDENCY CHECKER (must run before other imports) ───
 import sys
 import subprocess
 
@@ -46,9 +46,11 @@ def check_dependencies():
         sys.exit(0)
 
 check_dependencies()
-# ── END DEPENDENCY CHECKER ────────────────────────────────────────────────────
+# ── END DEPENDENCY CHECKER ────────────────────────────────────
+
 
 import os
+import sys
 import yara
 import hashlib
 import json
@@ -83,14 +85,14 @@ SEVERITY_COLORS = {
 
 SEVERITY_ORDER = {"CRITICAL": 4, "HIGH": 3, "MEDIUM": 2, "LOW": 1, "INFO": 0}
 
-# File extensions to skip (media files only — executables kept for malware scanning)
 SKIP_EXTENSIONS = {
+    # Media files only - NOT executables
     ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".ico", ".svg", ".webp",
     ".mp3", ".mp4", ".avi", ".mkv", ".mov", ".wav", ".flac",
     ".ttf", ".otf", ".woff", ".woff2",
 }
 
-MAX_FILE_SIZE_MB = 100  # Skip files larger than this (in MB)
+MAX_FILE_SIZE_MB = 50  # Skip files larger than this (in MB)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -107,9 +109,9 @@ def print_banner():
    ██║   ██║  ██║██║  ██║██║  ██║       ███████║███████╗███████╗╚██████╔╝   ██║   ██║  ██║
    ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝       ╚══════╝╚══════╝╚══════╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
 {Style.RESET_ALL}
-{Fore.WHITE}  ┌─────────────────────────────────────────────────────────────────────────────────────┐
-  │  {Fore.YELLOW}Advanced File System Scanner for Digital Forensics by StegX  {Fore.WHITE}│  {Fore.CYAN}v{VERSION}{Fore.WHITE}  │  {Fore.GREEN}YARA-Powered{Fore.WHITE}  │
-  └─────────────────────────────────────────────────────────────────────────────────────┘{Style.RESET_ALL}
+{Fore.WHITE}  ┌──────────────────────────────────────────────────────────────────────────────────────────┐
+  │  {Fore.YELLOW}Advanced File System Scanner for Digital Forensics by St3gX {Fore.WHITE}│  {Fore.CYAN}v{VERSION}{Fore.WHITE}  │  {Fore.GREEN}YARA-Powered{Fore.WHITE}  │
+  └──────────────────────────────────────────────────────────────────────────────────────────┘{Style.RESET_ALL}
 """
     print(banner)
 
@@ -307,7 +309,7 @@ class FileSystemWalker:
     def scan_directory(self, target_dir: str) -> list:
         target = Path(target_dir)
         if not target.exists():
-            print(f"{Fore.RED}[!] Target directory not found: {target_dir}{Style.RESET_ALL}")
+            print(f"{Fore.RED}[!] Target not found: {target_dir}{Style.RESET_ALL}")
             return []
 
         print(f"\n{Fore.CYAN}{'═'*70}{Style.RESET_ALL}")
@@ -317,27 +319,38 @@ class FileSystemWalker:
 
         self._start_spinner()
 
-        walker = os.walk(str(target), followlinks=self.follow_symlinks)
-        if not self.recursive:
-            walker = [next(walker)]
+        # --- NEW LOGIC: Check if target is a single file ---
+        if target.is_file():
+            with self._lock:
+                self._current_file = str(target)
+            self._scan_single(str(target))
+        
+        # --- ORIGINAL LOGIC: Target is a directory ---
+        else:
+            walker = os.walk(str(target), followlinks=self.follow_symlinks)
+            if not self.recursive:
+                try:
+                    walker = [next(walker)]
+                except StopIteration:
+                    walker = []
 
-        for dirpath, dirnames, filenames in walker:
-            # Skip hidden directories
-            dirnames[:] = [d for d in dirnames if not d.startswith(".")]
+            for dirpath, dirnames, filenames in walker:
+                # Skip hidden directories
+                dirnames[:] = [d for d in dirnames if not d.startswith(".")]
 
-            for filename in filenames:
-                filepath = os.path.join(dirpath, filename)
-                ext = Path(filename).suffix.lower()
+                for filename in filenames:
+                    filepath = os.path.join(dirpath, filename)
+                    ext = Path(filename).suffix.lower()
 
-                if ext in self.skip_ext:
+                    if ext in self.skip_ext:
+                        with self._lock:
+                            self.files_skipped += 1
+                        continue
+
                     with self._lock:
-                        self.files_skipped += 1
-                    continue
+                        self._current_file = filepath
 
-                with self._lock:
-                    self._current_file = filepath
-
-                self._scan_single(filepath)
+                    self._scan_single(filepath)
 
         self._stop_spinner()
         return self.results

@@ -10,17 +10,18 @@ Note: The reports/ directory is generated automatically during the first scan. I
 
 ```
 yara_sleuth/
-├── yara_sleuth.py           # Main scanner engine
-├── requirements.txt         # Python dependencies
-├── yara_rules/              # YARA rule sets
+├── yara_sleuth.py          # Main scanner engine
+├── requirements.txt        # Python dependencies
+├── yara_rules/             # YARA rule sets
+│   ├── binary_malware.yar
 │   ├── malware_detection.yar
 │   ├── suspicious_files.yar
 │   └── data_exfiltration.yar
-├── sample_files/            # Test files (simulated)
+├── sample_files/           # Test files (simulated)
 │   ├── sample_malware_sim.py
 │   ├── clean_app.py
 │   └── sql_payloads.txt
-└── reports/                 # Generated scan reports (auto-created)
+└── reports/                # Generated scan reports (auto-created)
 ```
 
 ---
